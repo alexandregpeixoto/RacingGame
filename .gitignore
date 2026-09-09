@@ -1,0 +1,11 @@
+node_modules
+dist
+playwright-report
+test-results
+.vite
+*.local
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+track-creator-runtime.png
+current-runtime.png
