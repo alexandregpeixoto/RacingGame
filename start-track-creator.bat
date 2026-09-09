@@ -29,12 +29,12 @@ if not exist "node_modules" (
 )
 
 echo Iniciando o servidor do Track Creator...
-start "Track Creator Dev Server" cmd /k "cd /d ""%~dp0"" && npm run dev -- --host 127.0.0.1 --port 5173"
-
-echo Aguardando o servidor ficar pronto...
-timeout /t 2 /nobreak >nul
-start "" "http://127.0.0.1:5173/"
-
-echo Track Creator aberto em http://127.0.0.1:5173/
+echo Feche esta janela ou pressione Ctrl+C para parar o servidor.
+call npm run dev -- --host 127.0.0.1 --port 5173 --strictPort --open
+if errorlevel 1 (
+  echo Falha ao iniciar. Verifique se a porta 5173 ja esta em uso.
+  pause
+  exit /b 1
+)
 
 endlocal

@@ -9,7 +9,10 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "typecheck": "tsc -b --pretty false",
+    "format": "prettier --write src tests vite.config.ts playwright.config.ts package.json tsconfig*.json",
+    "format:check": "prettier --check src tests vite.config.ts playwright.config.ts package.json tsconfig*.json"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
@@ -25,6 +28,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "jsdom": "latest",
+    "prettier": "^3.9.6",
     "vitest": "latest"
   }
 }

@@ -1,4 +1,4 @@
-export type ModuleDefinitionId = "straight" | "curve-left" | "curve-right";
+export type ModuleDefinitionId = string;
 
 export interface Vec2 {
   x: number;
@@ -27,10 +27,12 @@ export interface WorldSettings {
 }
 
 export interface ConnectorDefinition {
-  id: "start" | "end";
+  id: string;
   position: Vec3;
   tangent: number;
   width: number;
+  leftWidth?: number;
+  rightWidth?: number;
   type: "track";
 }
 
@@ -44,6 +46,7 @@ export interface TrackModule {
   definitionId: ModuleDefinitionId;
   transform: Transform3D;
   parameters: Record<string, number>;
+  controlPoints?: PathControlPoint[];
   properties?: TrackPropertyOverride;
 }
 
@@ -58,9 +61,18 @@ export interface TrackPath {
   kind: "primary-loop" | "secondary" | "racing-line" | "pit";
   closed: boolean;
   sourceModuleIds: string[];
+  traversals?: RouteTraversal[];
+  entryMarkerId?: string;
+  exitMarkerId?: string;
   widthMeters?: number;
   controlPoints?: PathControlPoint[];
   metadata?: Record<string, string | number | boolean>;
+}
+
+export interface RouteTraversal {
+  moduleId: string;
+  traversalId: string;
+  reversed: boolean;
 }
 
 export interface PathControlPoint {
@@ -73,7 +85,7 @@ export interface PathControlPoint {
 export interface TrackLocation {
   pathId: string;
   distanceMeters: number;
-  anchor?: { moduleId: string; localT: number };
+  anchor?: { moduleId: string; localT: number; traversalId?: string };
 }
 
 export type MarkerType =
@@ -116,6 +128,7 @@ export interface Insets {
 }
 
 export interface SpectatorFrame {
+  aspectRatio?: Vec2;
   center: Vec2;
   size: Vec2;
   rotation: number;
@@ -174,6 +187,7 @@ export interface TrackZone {
 }
 
 export interface PitBox {
+  sectionId?: string;
   id: string;
   pathId: string;
   distanceMeters: number;
@@ -183,6 +197,7 @@ export interface PitBox {
 }
 
 export interface TrackDocument {
+  minimumClearanceMeters?: number;
   schemaVersion: number;
   id: string;
   metadata: TrackMetadata;
@@ -215,18 +230,25 @@ export interface PathSample {
   tangent: Vec3;
   curvature: number;
   width: number;
+  leftWidth?: number;
+  rightWidth?: number;
+  traversalId?: string;
   moduleId: string;
   localT: number;
 }
 
 export interface TrackProjection {
+  traversalId?: string;
   distanceMeters: number;
   position: Vec3;
   distanceToTrack: number;
   moduleId?: string;
+  localT?: number;
 }
 
 export interface SampledPath {
+  closed: boolean;
+  drivablePolygons: Vec3[][];
   totalLengthMeters: number;
   samples: PathSample[];
   leftBoundary: Vec3[];
@@ -262,12 +284,24 @@ export interface ModuleGeometry {
   curve: ParametricCurve;
   width: number;
   connectors: ConnectorDefinition[];
+  traversals?: ModuleTraversal[];
+}
+
+export interface ModuleTraversal {
+  id: string;
+  entry: string;
+  exit: string;
+  curve: ParametricCurve;
+  widthAt(t: number): { left: number; right: number };
 }
 
 export interface ModuleDefinition {
   id: ModuleDefinitionId;
   label: string;
-  category: "straight" | "curve";
+  category: "straight" | "curve" | "transition" | "topology" | "pit";
   defaultParameters: Record<string, number>;
-  createGeometry(parameters: Record<string, number>): ModuleGeometry;
+  createGeometry(
+    parameters: Record<string, number>,
+    controlPoints?: PathControlPoint[],
+  ): ModuleGeometry;
 }

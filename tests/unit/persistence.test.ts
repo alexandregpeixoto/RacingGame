@@ -11,7 +11,9 @@ describe("track persistence", () => {
   });
 
   it("rejects unsupported documents", () => {
-    expect(() => parseDocument(JSON.stringify({ schemaVersion: 99 }))).toThrow("Invalid or unsupported track document");
+    expect(() => parseDocument(JSON.stringify({ schemaVersion: 99 }))).toThrow(
+      "Invalid or unsupported track document",
+    );
   });
 
   it("hydrates version-one documents created before terrain and props were added", () => {

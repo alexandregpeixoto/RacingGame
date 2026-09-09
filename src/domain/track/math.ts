@@ -45,9 +45,17 @@ export function lerpVec3(a: Vec3, b: Vec3, t: number): Vec3 {
   return { x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t), z: lerp(a.z, b.z, t) };
 }
 
-export function transformPoint(point: Vec3, position: Vec3, rotation: number): Vec3 {
+export function transformPoint(
+  point: Vec3,
+  position: Vec3,
+  rotation: number,
+): Vec3 {
   const rotated = rotate(point, rotation);
-  return { x: rotated.x + position.x, y: rotated.y + position.y, z: point.z + position.z };
+  return {
+    x: rotated.x + position.x,
+    y: rotated.y + position.y,
+    z: point.z + position.z,
+  };
 }
 
 export function transformAngle(angle: number, rotation: number): number {
@@ -74,8 +82,14 @@ export function boundsFromPoints(points: Vec2[]): { min: Vec2; max: Vec2 } {
   if (points.length === 0) return { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
   return points.reduce(
     (bounds, point) => ({
-      min: { x: Math.min(bounds.min.x, point.x), y: Math.min(bounds.min.y, point.y) },
-      max: { x: Math.max(bounds.max.x, point.x), y: Math.max(bounds.max.y, point.y) },
+      min: {
+        x: Math.min(bounds.min.x, point.x),
+        y: Math.min(bounds.min.y, point.y),
+      },
+      max: {
+        x: Math.max(bounds.max.x, point.x),
+        y: Math.max(bounds.max.y, point.y),
+      },
     }),
     { min: { ...points[0] }, max: { ...points[0] } },
   );
@@ -86,7 +100,9 @@ export function pointInPolygon(point: Vec2, polygon: Vec2[]): boolean {
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
     const a = polygon[i];
     const b = polygon[j];
-    const intersects = a.y > point.y !== b.y > point.y && point.x < ((b.x - a.x) * (point.y - a.y)) / (b.y - a.y) + a.x;
+    const intersects =
+      a.y > point.y !== b.y > point.y &&
+      point.x < ((b.x - a.x) * (point.y - a.y)) / (b.y - a.y) + a.x;
     if (intersects) inside = !inside;
   }
   return inside;
